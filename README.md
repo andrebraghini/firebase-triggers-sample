@@ -1,6 +1,6 @@
 # firebase-triggers-sample
 
-A sample repository to explore **firebase-triggers** library.
+A sample repository to explore [firebase-triggers](https://www.npmjs.com/package/firebase-triggers) library.
 
 ## Requirements
 
