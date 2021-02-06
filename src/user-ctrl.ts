@@ -1,3 +1,7 @@
+import { UserRecord } from 'firebase-functions/lib/providers/auth';
+import { EventContext, Request, Response, Change } from 'firebase-functions';
+import { QueryDocumentSnapshot } from 'firebase-functions/lib/providers/firestore';
+import { Message } from 'firebase-functions/lib/providers/pubsub';
 import {
   onFirebaseUserCreate,
   onFirebaseUserDelete,
@@ -6,24 +10,24 @@ import {
   onFirestoreDelete,
   onFirestoreWrite,
   onPubSubPublish,
-  onRequest,
   onPubSubSchedule,
+  onRequest, GET, POST, PUT, PATCH, DELETE
 } from 'firebase-triggers';
 
 export class UserCtrl {
 
   @onFirebaseUserCreate()
-  onCreate(user, context) {
+  onCreate(user: UserRecord, context: EventContext) {
     console.log(`${user.displayName} joined us`);
   }
 
   @onFirebaseUserDelete()
-  onDelete(user, context) {
+  onDelete(user: UserRecord, context: EventContext) {
     console.log(`${user.displayName} left us`);
   }
 
   @onFirestoreCreate('users/{uid}')
-  docCreate(snapshot, context) {
+  docCreate(snapshot: QueryDocumentSnapshot, context: EventContext) {
     // Get an object representing the document. e.g. { name: 'Robin Hood', age: 42, ... }
     const newValue = snapshot.data();
     // access a particular field as you would any JS property
@@ -34,7 +38,7 @@ export class UserCtrl {
   }
 
   @onFirestoreUpdate('users/{id}')
-  docUpdate(change, context) {
+  docUpdate(change: Change<QueryDocumentSnapshot>, context: EventContext) {
     // Get an object representing the document. e.g. { name: 'Robin Hood', age: 42, ... }
     const newValue = change.after.data();
     // ...or the previous value before this update
@@ -47,7 +51,7 @@ export class UserCtrl {
   }
 
   @onFirestoreDelete('users/{id}')
-  docDelete(snapshot, context) {
+  docDelete(snapshot: QueryDocumentSnapshot, context: EventContext) {
     // Get an object representing the document. e.g. { name: 'Robin Hood', age: 42, ... }
     const oldValue = snapshot.data();
     // access a particular field as you would any JS property
@@ -57,14 +61,14 @@ export class UserCtrl {
   }
 
   @onFirestoreWrite('user/{id}')
-  docWrite(change, context) {
+  docWrite(change: Change<QueryDocumentSnapshot>, context: EventContext) {
     // Get an object representing the document. e.g. { name: 'Robin Hood', age: 42, ... }
-    const newDocument = change.after.exists ? change.after.data() : null;
+    const newDocument = change.after.exists ? change.after.data() : undefined;
     // Get an object with the previous document value (for update or delete)
-    const oldDocument = change.before.exists ? change.before.data() : null;
+    const oldDocument = change.before.exists ? change.before.data() : undefined;
 
     if (!newDocument) {
-      const name = oldDocument.name;
+      const name = oldDocument?.name;
       console.log(`User "${name}" was removed from collection`);
       return;
     }
@@ -83,18 +87,18 @@ export class UserCtrl {
   }
 
   @onPubSubPublish('my-topic')
-  pubsubSubscribe(message, context) {
+  pubsubSubscribe(message: Message, context: EventContext) {
     const publishedData = message.json;
     console.log('Data published via PubSub on my-topic:', publishedData);
   }
 
   @onPubSubSchedule('0 5 * * *')
-  everyDayAtFiveAM(context) {
+  everyDayAtFiveAM(context: EventContext) {
     console.log('Method executed every day at 5 AM');
   }
 
   @onRequest('myCustomPath')
-  httpRequest(request, response) {
+  httpRequest(request: Request, response: Response) {
     const requestBody = request.body;
     console.log({ requestBody });
 
@@ -102,16 +106,73 @@ export class UserCtrl {
   }
 
   @onRequest()
-  helloWorld(request, response) {
+  helloWorld(request: Request, response: Response) {
     response.send('Hello World!');
   }
 
-  @onRequest()
-  get(request, response) {
-    response.json({
-      name: 'Robin Hood',
-      age: 42
-    });
+  @GET('users')
+  get(request: Request, response: Response) {
+    const id = request.path.split('/')[1];
+    let data;
+    if (id) {
+      // TODO: Load user data
+      data = {
+        name: 'Robin Hood',
+        age: 42
+      };
+    } else {
+      // TODO: Load user list
+      data = [];
+    }
+    response.json(data);
+  }
+
+  @POST('users')
+  post(request: Request, response: Response) {
+    // TODO: Insert user data
+    response
+      .status(201)
+      .json({ success: true });
+  }
+
+  @PUT('users')
+  put(request: Request, response: Response) {
+    const id = request.path.split('/')[1];
+    const data = request.body;
+
+    // TODO: Insert user data
+    id;
+    data;
+
+    response
+      .status(201)
+      .json({ success: true });
+  }
+
+  @PATCH('users')
+  patch(request: Request, response: Response) {
+    const id = request.path.split('/')[1];
+    const data = request.body;
+    
+    // TODO: Update partial user data
+    id;
+    data;
+
+    response
+      .status(201)
+      .json({ success: true });
+  }
+
+  @DELETE('users')
+  del(request: Request, response: Response) {
+    const id = request.path.split('/')[1];
+    
+    // TODO: Remove user data
+    id;
+
+    response
+      .status(201)
+      .json({ success: true });
   }
 
 }
