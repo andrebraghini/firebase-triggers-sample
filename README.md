@@ -4,7 +4,7 @@ A sample repository to explore [firebase-triggers](https://www.npmjs.com/package
 
 ## Requirements
 
-If you want to use the Firebase Emulator locally, you need to install the [Java JDK](https://www.oracle.com/java/technologies/javase-downloads.html). Otherwise, there is no need.
+You need a Firebase account and, if you want to use the Firebase Emulator locally, you need to install the [Java JDK](https://www.oracle.com/java/technologies/javase-downloads.html).
 
 ## Usage
 

@@ -132,7 +132,7 @@ export class UserCtrl {
     // TODO: Insert user data
     response
       .status(201)
-      .json({ success: true });
+      .json({ success: true, msg: 'User created' });
   }
 
   @PUT('users')
@@ -146,7 +146,7 @@ export class UserCtrl {
 
     response
       .status(201)
-      .json({ success: true });
+      .json({ success: true, msg: 'User updated' });
   }
 
   @PATCH('users')
@@ -160,7 +160,7 @@ export class UserCtrl {
 
     response
       .status(201)
-      .json({ success: true });
+      .json({ success: true, msg: 'User updated partially' });
   }
 
   @DELETE('users')
@@ -172,7 +172,7 @@ export class UserCtrl {
 
     response
       .status(201)
-      .json({ success: true });
+      .json({ success: true, msg: 'User removed' });
   }
 
 }
