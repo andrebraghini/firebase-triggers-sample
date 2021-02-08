@@ -1,0 +1,52 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "login": "john",
+            "email": "john@mailna.co",
+            "password": "abc123"
+        }
+    ],
+    "required": [
+        "login",
+        "email",
+        "password"
+    ],
+    "properties": {
+        "login": {
+            "$id": "#/properties/login",
+            "type": "string",
+            "title": "The login schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "john"
+            ]
+        },
+        "email": {
+            "$id": "#/properties/email",
+            "type": "string",
+            "title": "The email schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "john@mailna.co"
+            ]
+        },
+        "password": {
+            "$id": "#/properties/password",
+            "type": "string",
+            "title": "The password schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "abc123"
+            ]
+        }
+    },
+    "additionalProperties": true
+}
