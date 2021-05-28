@@ -2,6 +2,7 @@ import { UserRecord } from 'firebase-functions/lib/providers/auth';
 import { EventContext, Request, Response, Change } from 'firebase-functions';
 import { QueryDocumentSnapshot } from 'firebase-functions/lib/providers/firestore';
 import { Message } from 'firebase-functions/lib/providers/pubsub';
+import { ObjectMetadata } from 'firebase-functions/lib/providers/storage';
 import {
   onFirebaseUserCreate,
   onFirebaseUserDelete,
@@ -11,10 +12,17 @@ import {
   onFirestoreWrite,
   onPubSubPublish,
   onPubSubSchedule,
-  onRequest, GET, POST, PUT, PATCH, DELETE
+  onRequest, GET, POST, PUT, PATCH, DELETE,
+  onStorageArchive, onStorageDelete, onStorageFinalize, onStorageMetadataUpdate, onCall
 } from 'firebase-triggers';
 
 export class UserCtrl {
+
+  @onCall()
+  doSomething(data: any, context: EventContext) {
+    // This method can be called by Firebase SDK to do anything you want
+    console.log('callable method doSomething() executed');
+  }
 
   @onFirebaseUserCreate()
   onCreate(user: UserRecord, context: EventContext) {
@@ -173,6 +181,34 @@ export class UserCtrl {
     response
       .status(201)
       .json({ success: true, msg: 'User removed' });
+  }
+
+  @onStorageArchive()
+  onArchiveFile(object: ObjectMetadata, context: EventContext) {
+    // You can add the bucketName as a parameter on the @onStorageArquive() decorator also
+    // but the bucket must exist
+    console.log(`File ${object.name} archived`);
+  }
+  
+  @onStorageDelete()
+  onDeleteFile(object: ObjectMetadata, context: EventContext) {
+    // You can add the bucketName as a parameter on the @onStorageDelete() decorator also
+    // but the bucket must exist
+    console.log(`File ${object.name} deleted`);
+  }
+
+  @onStorageFinalize()
+  onFinalizeFileUpload(object: ObjectMetadata, context: EventContext) {
+    // You can add the bucketName as a parameter on the @onStorageFinalize() decorator also
+    // but the bucket must exist
+    console.log(`File ${object.name} uploaded`);
+  }
+
+  @onStorageMetadataUpdate()
+  onUpdateFileMetadata(object: ObjectMetadata, context: EventContext) {
+    // You can add the bucketName as a parameter on the @onStorageMetadataUpdate() decorator also
+    // but the bucket must exist
+    console.log(`File ${object.name} updated`);
   }
 
 }
