@@ -1,8 +1,8 @@
-import { UserRecord } from 'firebase-functions/lib/providers/auth';
+import { UserRecord } from 'firebase-admin/auth';
 import { EventContext, Request, Response, Change } from 'firebase-functions';
-import { QueryDocumentSnapshot } from 'firebase-functions/lib/providers/firestore';
-import { Message } from 'firebase-functions/lib/providers/pubsub';
-import { ObjectMetadata } from 'firebase-functions/lib/providers/storage';
+import { QueryDocumentSnapshot } from 'firebase-functions/v2/firestore';
+import { Message } from 'firebase-functions/v2/pubsub';
+import { ObjectMetadata } from 'firebase-functions/v1/storage';
 import {
   onFirebaseUserCreate,
   onFirebaseUserDelete,
@@ -95,7 +95,7 @@ export class UserCtrl {
   }
 
   @onPubSubPublish('my-topic')
-  pubsubSubscribe(message: Message, context: EventContext) {
+  pubsubSubscribe(message: Message<any>, context: EventContext) {
     const publishedData = message.json;
     console.log('Data published via PubSub on my-topic:', publishedData);
   }
@@ -211,4 +211,20 @@ export class UserCtrl {
     console.log(`File ${object.name} updated`);
   }
 
+  @onRequest({
+    memory: '128MB',
+    timeoutSeconds: 60,
+    minInstances: 2,
+    maxInstances: 4,
+    vpcConnectorEgressSettings: 'ALL_TRAFFIC',
+    ingressSettings: 'ALLOW_ALL',
+    invoker: 'public',
+    region: 'us-east1'
+  })
+  httpRequestWithCustomSetup(request: Request, response: Response) {
+    const requestBody = request.body;
+    console.log({ requestBody });
+
+    response.send('Custom response!');
+  }
 }
